@@ -6,35 +6,49 @@ The first version will generate Laravel version 6.0 related entities. The entiti
 - Models
 - Migrations
 
-In order to run the application
-ng serve --open
+## Running the app
+In order to run the application run
 
-The user can create the models and related attributes thru the web interface. Upon finishing the design of the models, the user can generate the schema of the design. A json file will be generated. The user will place the file within his/her Laravel project
+`ng serve --open`
+
+## Generating the entities
+
+You can create the models and related attributes thru the web interface. Upon finishing the design of the models, you can generate the schema of the design. A json file will be generated. You should then place the file within your Laravel project
 In order to create the models and migration. the larifriqiya package is required. Execute the following command to generate the models and migration:
 
-php artisan ifriqiya:install
+`php artisan ifriqiya:install`
 
 
-## Development server
+## Requirements
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+The use of this project has two dependencies in order to generate the entities:
 
-## Code scaffolding
+- Angular cli to run the generator on your server.
+- And larifriqiya Laravel package to generate the entities
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Future features
 
-## Running unit tests
+### Version 1
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- Integrate more Laravel entities: 
+    - Seeds,
+    - Controllers,
+    - views,
+    - factories,
+    ...
 
-## Running end-to-end tests
+- Give the user the option to:
+    - Download a new laravel project including the generated entities
+    - Specify Laravel version
+    - Download only the entities
+    - Update an existing schema and download updated entities
+    - Import/Export a schema
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-## Further help
+### Version 2
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- Choose a type of project: Laravel, Symfony, Codeigniter, Angular, React, Vue, Django (We'll integrate only one or two project type for version 2)
+- Let developer contribute with type of project by defining a project type, related entities and templates to be used to generate entities
+
