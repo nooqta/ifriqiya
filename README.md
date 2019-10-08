@@ -1,6 +1,18 @@
-# Ifriqiya
+# Ifriqiya (Arabic: إفريقية‎ Ifrīqya)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.2.
+This is an experimental project that  intends to generate a (web|mobile|desktop) application based on predefined entitities. An entity depends on the type of framework/ library selected during the design phase.
+The first version will generate Laravel version 6.0 related entities. The entities the project will help you generate are: 
+
+- Models
+- Migrations
+
+In order to run the application
+ng serve --open
+
+The user can create the models and related attributes thru the web interface. Upon finishing the design of the models, the user can generate the schema of the design. A json file will be generated. The user will place the file within his/her Laravel project
+In order to create the models and migration. the larifriqiya package is required. Execute the following command to generate the models and migration:
+php artisan ifriqiya:install
+
 
 ## Development server
 
