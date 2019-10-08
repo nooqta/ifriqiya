@@ -11,6 +11,7 @@ ng serve --open
 
 The user can create the models and related attributes thru the web interface. Upon finishing the design of the models, the user can generate the schema of the design. A json file will be generated. The user will place the file within his/her Laravel project
 In order to create the models and migration. the larifriqiya package is required. Execute the following command to generate the models and migration:
+
 php artisan ifriqiya:install
 
 
