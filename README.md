@@ -2,6 +2,11 @@
 
 Ifriqiya is Laravel Models and migrations bulk generator. You can now create multiple models migration at the same. Ifriqiya uses Angular 8 and NestJs. The UI generator create a json file to be used along Larifriqiya artisan command.
 
+# Demo
+A demo can be found at the following link
+
+https://ifriqiya.noqta.tn/
+
 # Dependencies
 
 - node
