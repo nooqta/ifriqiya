@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import '~material-icons/iconfont/material-icons.css';
+hr {
+    margin-top: 0px;
+}
+
+.btn-group-sm>.btn,
+.btn-sm {
+    padding: .25rem .5rem;
+    font-size: 12px;
+}

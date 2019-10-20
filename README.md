@@ -1,54 +1,26 @@
-# Ifriqiya (Arabic: إفريقية‎ Ifrīqya)
+# Ifriqiya
 
-This is an experimental project that  intends to generate a (web|mobile|desktop) application based on predefined entitities. An entity depends on the type of framework/ library selected during the design phase.
-The first version will generate Laravel version 6.0 related entities. The entities the project will help you generate are: 
+Ifriqiya is Laravel Models and migrations bulk generator. You can now create multiple models migration at the same. Ifriqiya uses Angular 8 and NestJs. The UI generator create a json file to be used along Larifriqiya artisan command.
 
-- Models
-- Migrations
+# Dependencies
 
-## Running the app
-In order to run the application run
+- node
+- npm
+- angular-cli
+- NestJs
 
-`ng serve --open`
+In order to generate the models and migration on your project, you will need also the following Laravel package installed:
 
-## Generating the entities
+[Larifriqiya](https://github.com/nooqta/larifriqiya)
 
-You can create the models and related attributes thru the web interface. Upon finishing the design of the models, you can generate the schema of the design. A json file will be generated. You should then place the file within your Laravel project
-In order to create the models and migration. the larifriqiya package is required. Execute the following command to generate the models and migration:
+# Usage
 
-`php artisan ifriqiya:install`
+In order to start using the generatorm as a regular Angular 8 cli project, run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. 
 
+The generator will create a json file. Provide the file to the Larifiriqiya command as follow
 
-## Requirements
+`php artisan ifriqiya:migration yourjsonfile.json`
 
-The use of this project has two dependencies in order to generate the entities:
+This will create the models and migration found in the json file.
 
-- Angular cli to run the generator on your server.
-- And larifriqiya Laravel package to generate the entities
-
-
-
-## Future features
-
-### Version 1
-
-- Integrate more Laravel entities: 
-    - Seeds,
-    - Controllers,
-    - views,
-    - factories,
-    ...
-
-- Give the user the option to:
-    - Download a new laravel project including the generated entities
-    - Specify Laravel version
-    - Download only the entities
-    - Update an existing schema and download updated entities
-    - Import/Export a schema
-
-
-### Version 2
-
-- Choose a type of project: Laravel, Symfony, Codeigniter, Angular, React, Vue, Django (We'll integrate only one or two project type for version 2)
-- Let developer contribute with type of project by defining a project type, related entities and templates to be used to generate entities
-
+The project is an initial POC and we are looking toward adding more features.
