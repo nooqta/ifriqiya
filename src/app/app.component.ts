@@ -5,11 +5,10 @@ import { Model } from './models/laravel/model';
 import { Project } from './models/project';
 import { Component, OnInit } from '@angular/core';
 import { Field } from './models/laravel/attributes/field';
-import { filter, map } from 'rxjs/operators';
-import { of } from 'rxjs/internal/observable/of';
 import { ForeignKey } from './models/laravel/attributes/foreign-key';
 import { Relationship } from './models/laravel/attributes/relationship';
 import { HttpClient } from '@angular/common/http';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,6 +17,7 @@ import { HttpClient } from '@angular/common/http';
 export class AppComponent implements OnInit {
   project: Project;
   model: Model;
+  field: Field;
   fieldTypes: any;
   fields: string[];
   relationshipTypes: string[];
@@ -25,12 +25,14 @@ export class AppComponent implements OnInit {
   isEditMode = false;
   currentIndex = 0;
   fieldOptions: string[];
-  constructor(public http: HttpClient){
+  modalRef: BsModalRef;
+  constructor(public http: HttpClient, private modalService: BsModalService){
 
   }
   ngOnInit(): void {
     this.project = new Project();
     this.model = new Model();
+    this.field = new Field();
     this.fieldTypes = fieldTypes;
     this.relationshipTypes = relationshipTypes;
     this.fields = [];
@@ -39,18 +41,30 @@ export class AppComponent implements OnInit {
   }
 
   addField() {
-    this.model.fields.push(new Field());
+    this.model.fields.push(this.field);
+    this.model = JSON.parse(JSON.stringify(this.model));
+    this.field = new Field();
+    this.modalRef.hide();
+  }
+
+  resetField() {
+    this.field = new Field();
   }
 
   removeField(index) {
     this.model.fields.splice(index, 1);
-    this.getFields();
+    this.model = JSON.parse(JSON.stringify(this.model));
+  }
+
+  reorderFields(e){
+    this.model.fields = e;
   }
 
   saveModel() {
     this.project.entities.models.push(this.model);
     this.model = new Model();
     this.getClasses();
+    this.getFields();
   }
 
   resetModel(){
@@ -59,6 +73,7 @@ export class AppComponent implements OnInit {
 
   removeModel(index) {
     this.project.entities.models.splice(index,1);
+    this.getFields();
   }
 
   editModel(index) {
@@ -72,32 +87,33 @@ export class AppComponent implements OnInit {
     this.isEditMode = false;
     this.currentIndex = 0;
     this.model = new Model();
+    this.getFields();
   }
 
-  addFieldArgument(i){
-    this.model.fields[i].arguments.push('');
-    this.model.fields[i].arguments = JSON.parse(JSON.stringify(this.model.fields[i].arguments));
+  addFieldArgument(){
+    this.field.arguments.push('');
+    this.field.arguments = JSON.parse(JSON.stringify(this.field.arguments));
 
   }
   
 trackByFieldArgument(index, item) {
 return index;
 }
-  removeFieldArgument(i,j){
-this.model.fields[i].arguments.splice(j,1);
+  removeFieldArgument(j){
+this.field.arguments.splice(j,1);
   }
 
   addFieldOption(i){
-    this.model.fields[i].options.push({key: '', value: ''});
-    this.model.fields[i].options = JSON.parse(JSON.stringify(this.model.fields[i].options));
+    this.field.options.push({key: '', value: ''});
+    this.field.options = JSON.parse(JSON.stringify(this.field.options));
 
   }
   
 trackByFieldOption(index, item) {
 return index;
 }
-  removeFieldOption(i,j) {
-this.model.fields[i].options.splice(j,1);
+  removeFieldOption(j) {
+this.field.options.splice(j,1);
   }
 
   addForeignKey() {
@@ -107,7 +123,7 @@ this.model.fields[i].options.splice(j,1);
     this.model.foreign_keys.splice(index, 1);
   }
   getFields() {
-    this.fields = Array.from(this.project.entities.models, (model: Model) => `${model.name.toLowerCase()}s`);
+    this.fields = Array.from(this.project.entities.models, (model: Model) => `${model.name.toLowerCase()}`);
   }
 
   getModelFields(model) {
@@ -145,5 +161,9 @@ this.model.fields[i].options.splice(j,1);
       const uri = res.uri;
       window.open( environment.apiUrl + uri, '_blank');
     });
+  }
+
+  addFieldModal(template){
+    this.modalRef = this.modalService.show(template);
   }
 }

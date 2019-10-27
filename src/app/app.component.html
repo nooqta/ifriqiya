@@ -1,4 +1,100 @@
-<a href="https://github.com/nooqta/ifriqiya"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+<ng-template #template>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Add new field</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label for="name">Name</label>
+                <input id="fieldName" [autofocus] (change)="getFields()" name="fieldName" [(ngModel)]="field.name"
+                    #fieldName="ngModel" placeholder="Field name" type="text" class="form-control"
+                    aria-describedby="nameHelpBlock" required="required">
+                <span id="nameHelpBlock" class="form-text text-muted">The field name of the
+                    model</span>
+            </div>
+            <div class="form-group col-lg-6">
+                <label for="type">Type</label>
+                <div>
+                    <select id="fieldType" name="fieldType" required [(ngModel)]="field.type" #fieldType="ngModel"
+                        required="required" class="custom-select" aria-describedby="typeHelpBlock">
+                        <option *ngFor="let type of fieldTypes" [value]="type">{{type}}</option>
+                    </select>
+                    <span id="typeHelpBlock" class="form-text text-muted">The field type</span>
+                </div>
+            </div>
+        </div>
+        <h6 style="overflow: auto;" for="arg">Arguments
+            <button type="button" (click)="addFieldArgument()" class="btn btn-primary btn-sm mr-1 float-right"><i
+                    class="material-icons" style="font-size: 12px;">add</i></button>
+        </h6>
+        <hr>
+        <div class="row" *ngFor="let argument of field.arguments; let j = index;trackBy: trackByFieldArgument">
+            <div class="form-group col-lg-10">
+                <input id="arg{{j}}" name="arg{{j}}" [(ngModel)]="item.arguments[j]" #fieldArgument="ngModel"
+                    placeholder="Field argument" type="text" class="form-control" aria-describedby="argumentHelpBlock">
+                <span id="argumentHelpBlock" class="form-text text-muted">Use the arguments
+                    available to the type of model selected</span>
+            </div>
+            <div class="form-group  col-lg-2">
+                <div class="text-center">
+                    <button type="button" (click)="removeFieldArgument(j)" class="btn btn-danger btn-sm mr-1"><i
+                            class="material-icons" style="font-size: 12px;">delete</i></button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="field.arguments.length == 0" class="alert alert-primary" role="alert">
+            Start adding your fields arguments by pressing the + button.
+        </div>
+        <h6 style="overflow: auto;" for="arg">Options
+            <button type="button" (click)="addFieldOption()" class="btn btn-primary btn-sm mr-1 float-right"><i
+                    class="material-icons" style="font-size: 12px;">add</i></button>
+        </h6>
+        <hr>
+        <div class="row" *ngFor="let option of field.options; let k = index;trackBy: trackByFieldOption">
+            <div class="form-group col-lg-5">
+                <div>
+                    <select id="optionKey{{k}}" name="optionKey{{k}}" [(ngModel)]="field.options[k].key"
+                        #fieldKeyOption="ngModel" required="required" class="custom-select"
+                        aria-describedby="typeHelpBlock">
+                        <option *ngFor="let option of fieldOptions" [value]="option">{{option}}</option>
+                    </select>
+                    <span id="typeHelpBlock" class="form-text text-muted">The field options</span>
+                </div>
+            </div>
+            <div class="form-group col-lg-5">
+                <input id="optionArg{{k}}" name="optionArg{{k}}" [(ngModel)]="field.options[k].value"
+                    #fieldOption="ngModel" placeholder="Field option" type="text" class="form-control"
+                    aria-describedby="optionHelpBlock">
+                <span id="optionHelpBlock" class="form-text text-muted">Use the options
+                    available option arguments</span>
+            </div>
+            <div class="form-group  col-lg-2">
+                <div class="text-center">
+                    <button type="button" (click)="removeFieldOption(k)" class="btn btn-danger btn-sm mr-1"><i
+                            class="material-icons" style="font-size: 12px;">delete</i></button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="field.options.length == 0" class="alert alert-primary" role="alert">
+            Start adding your fields options by pressing the + button.
+        </div>
+        <div class="form-group float-right">
+            <button name="reset" (click)="resetField()" class="btn btn-danger mr-1">
+                Reset
+                <i class="material-icons" style="font-size: 12px;">refresh</i>
+            </button>
+            <button name="submit" (click)="addField()" class="btn btn-success">
+                Save
+                <i class="material-icons" style="font-size: 12px;">save</i>
+            </button>
+        </div>
+    </div>
+</ng-template>
+<a href="https://github.com/nooqta/ifriqiya"><img style="position: absolute; top: 0; right: 0; border: 0;"
+        src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
 <div class="py-5 text-center">
     <h2>Ifiriqiya Generator</h2>
     <p class="lead">Laravel bulk models generator. A generator that helps you create models and migrations faster.
@@ -8,7 +104,8 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{isEditMode? 'Edit ' + model.name:'Create a new model'}}
-                    <button type="button" (click)="isEditMode?updateModel():saveModel()" class="btn btn-success btn-sm float-right">
+                    <button type="button" (click)="isEditMode?updateModel():saveModel()"
+                        class="btn btn-success btn-sm float-right">
                         <i class="material-icons" style="font-size: 12px;">save</i>
                     </button>
                 </h5>
@@ -16,18 +113,22 @@
                 <form #form="ngForm">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input id="name" name="name" [(ngModel)]="model.name" #name="ngModel" placeholder="Model name" type="text" aria-describedby="nameHelpBlock" required="required" class="form-control">
+                        <input id="name" name="name" [(ngModel)]="model.name" #name="ngModel" placeholder="Model name"
+                            type="text" aria-describedby="nameHelpBlock" required="required" class="form-control">
                         <span id="nameHelpBlock" class="form-text text-muted">The model name to be used</span>
                     </div>
                     <div class="form-group">
                         <label for="namespace">Namespace</label>
-                        <input id="namespace" name="namespace" [(ngModel)]="model.namespace" #namespace="ngModel" placeholder="Model namespace" type="text" class="form-control" aria-describedby="namespaceHelpBlock">
+                        <input id="namespace" name="namespace" [(ngModel)]="model.namespace" #namespace="ngModel"
+                            placeholder="Model namespace" type="text" class="form-control"
+                            aria-describedby="namespaceHelpBlock">
                         <span id="namespaceHelpBlock" class="form-text text-muted">The namespace (example:
-                            App\Models\User)</span>
+                            App\Models)</span>
                     </div>
                     <div class="form-group">
                         <div class="form-group form-check">
-                            <input type="checkbox" value="true" name="softDelete" [(ngModel)]="model.softDelete" #softDelete="ngModel" class="form-check-input" id="exampleCheck1">
+                            <input type="checkbox" value="true" name="softDelete" [(ngModel)]="model.softDelete"
+                                #softDelete="ngModel" class="form-check-input" id="exampleCheck1">
                             <label class="form-check-label" for="exampleCheck1">Include soft deletes?</label>
                         </div>
                     </div>
@@ -40,81 +141,28 @@
                                     </h5>
                                 </div>
                                 <div class="col-lg-2">
-                                    <button (click)="addField()" type="button" class="btn btn-primary btn-sm"><i
-                                            class="material-icons" style="font-size: 12px;">add</i></button>
+                                    <button (click)="addFieldModal(template)" type="button"
+                                        class="btn btn-primary btn-sm"><i class="material-icons"
+                                            style="font-size: 12px;">add</i></button>
                                 </div>
                             </div>
                             <hr>
-                            <div class="form-section mb-1" *ngFor="let item of model.fields; let i = index">
-                                <button type="button" (click)="removeField(i)" class="btn btn-outline-danger btn-sm float-right">x</button>
-                                <div class="row">
-                                    <div class="form-group col-lg-6">
-                                        <label for="name">Name</label>
-                                        <input id="fieldName{{i}}" (change)="getFields()" name="fieldName{{i}}" [(ngModel)]="item.name" #fieldName="ngModel" placeholder="Field name" type="text" class="form-control" aria-describedby="nameHelpBlock" required="required">
-                                        <span id="nameHelpBlock" class="form-text text-muted">The field name of the
-                                            model</span>
-                                    </div>
-                                    <div class="form-group col-lg-6">
-                                        <label for="type">Type</label>
-                                        <div>
-                                            <select id="fieldType{{i}}" name="fieldType{{i}}" required [(ngModel)]="item.type" #fieldType="ngModel" required="required" class="custom-select" aria-describedby="typeHelpBlock">
-                                                <option *ngFor="let type of fieldTypes" [value]="type">{{type}}</option>
-                                            </select>
-                                            <span id="typeHelpBlock" class="form-text text-muted">The field type</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h6 style="overflow: auto;" for="arg">Arguments
-                                    <button type="button" (click)="addFieldArgument(i)" class="btn btn-primary btn-sm mr-1 float-right"><i class="material-icons"
-                                            style="font-size: 12px;">add</i></button>
-                                </h6>
-                                <hr>
-                                <div class="row" *ngFor="let argument of item.arguments; let j = index;trackBy: trackByFieldArgument">
-                                    <div class="form-group col-lg-10">
-                                        <input id="arg{{j}}" name="arg{{j}}" [(ngModel)]="item.arguments[j]" #fieldArgument="ngModel" placeholder="Field argument" type="text" class="form-control" aria-describedby="argumentHelpBlock">
-                                        <span id="argumentHelpBlock" class="form-text text-muted">Use the arguments
-                                            available to the type of model selected</span>
-                                    </div>
-                                    <div class="form-group  col-lg-2">
-                                        <div class="text-center">
-                                            <button type="button" (click)="removeFieldArgument(i,j)" class="btn btn-danger btn-sm mr-1"><i class="material-icons"
-                                                    style="font-size: 12px;">delete</i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div *ngIf="item.arguments.length == 0" class="alert alert-primary" role="alert">
-                                    Start adding your fields arguments by pressing the + button.
-                                </div>
-                                <h6 style="overflow: auto;" for="arg">Options
-                                    <button type="button" (click)="addFieldOption(i)" class="btn btn-primary btn-sm mr-1 float-right"><i class="material-icons"
-                                            style="font-size: 12px;">add</i></button>
-                                </h6>
-                                <hr>
-                                <div class="row" *ngFor="let option of item.options; let k = index;trackBy: trackByFieldOption">
-                                    <div class="form-group col-lg-5">
-                                        <div>
-                                            <select id="optionKey{{k}}" name="optionKey{{k}}" [(ngModel)]="item.options[k].key" #fieldKeyOption="ngModel" required="required" class="custom-select" aria-describedby="typeHelpBlock">
-                                                        <option *ngFor="let option of fieldOptions" [value]="option">{{option}}</option>
-                                                    </select>
-                                            <span id="typeHelpBlock" class="form-text text-muted">The field options</span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-lg-5">
-                                        <input id="optionArg{{k}}" name="optionArg{{k}}" [(ngModel)]="item.options[k].value" #fieldOption="ngModel" placeholder="Field option" type="text" class="form-control" aria-describedby="optionHelpBlock">
-                                        <span id="optionHelpBlock" class="form-text text-muted">Use the options
-                                                available option arguments</span>
-                                    </div>
-                                    <div class="form-group  col-lg-2">
-                                        <div class="text-center">
-                                            <button type="button" (click)="removeFieldOption(i,k)" class="btn btn-danger btn-sm mr-1"><i class="material-icons"
-                                                    style="font-size: 12px;">delete</i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div *ngIf="item.options.length == 0" class="alert alert-primary" role="alert">
-                                    Start adding your fields options by pressing the + button.
-                                </div>
-                            </div>
+                            <ng-template class="list-group" #itemTemplate let-item="item" let-index="index">
+                                <li class="list-group-item mb-1">
+                                        <i class="material-icons" style="font-size: 12px;">open_with</i>
+                                     {{item.initData.name}}: <code>{{item.initData.type}}</code>
+                                    <button type="button" (click)="removeField(index)"
+                                        class="btn btn-danger btn-sm float-right">
+                                        <i class="material-icons" style="font-size: 12px;">delete</i>
+                                    </button>
+                                </li>
+                            </ng-template>
+                            <bs-sortable [(ngModel)]="model.fields" itemClass="sortable-item"
+                            (onChange)="reorderFields($event)"
+                                itemActiveClass="sortable-item-active" placeholderClass="placeholderStyle"
+                                wrapperClass="sortable-wrapper" [itemTemplate]="itemTemplate"
+                                [ngModelOptions]="{standalone: true}">
+                            </bs-sortable>
                             <div *ngIf="model.fields.length == 0" class="alert alert-primary" role="alert">
                                 Start adding your fields by pressing the + button.
                             </div>
@@ -123,26 +171,31 @@
 
                         <tab heading="Foreign keys" *ngIf="this.project.entities.models.length > 0">
                             <h5 class="mt-1">Foreign keys
-                                <button type="button" (click)="addForeignKey()" class="btn btn-primary btn-sm float-right"><i class="material-icons"
+                                <button type="button" (click)="addForeignKey()"
+                                    class="btn btn-primary btn-sm float-right"><i class="material-icons"
                                         style="font-size: 12px;">add</i></button>
                             </h5>
                             <hr>
                             <div class="form-section" *ngFor="let item of model.foreign_keys; let i = index">
-                                <button type="button" (click)="removeForeignKey(i)" class="btn btn-outline-danger btn-sm float-right">x</button>
+                                <button type="button" (click)="removeForeignKey(i)"
+                                    class="btn btn-outline-danger btn-sm float-right">x</button>
                                 <div class="row">
                                     <div class="form-group col-lg-6">
                                         <label for="column{{i}}">Column</label>
-                                        <input id="column{{i}}" name="column{{i}}" [(ngModel)]="item.column" #column="ngModel" type="text" class="form-control">
+                                        <input id="column{{i}}" name="column{{i}}" [(ngModel)]="item.column"
+                                            #column="ngModel" type="text" class="form-control">
                                     </div>
                                     <div class="form-group  col-lg-6">
                                         <label for="references{{i}}">References</label>
-                                        <input id="references{{i}}" name="references{{i}}" [(ngModel)]="item.references" #references="ngModel" type="text" class="form-control">
+                                        <input id="references{{i}}" name="references{{i}}" [(ngModel)]="item.references"
+                                            #references="ngModel" type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="on">On</label>
                                     <div>
-                                        <select id="on" name="on" [(ngModel)]="item.on" #on="ngModel" class="custom-select">
+                                        <select id="on" name="on" [(ngModel)]="item.on" #on="ngModel"
+                                            class="custom-select">
                                             <option *ngFor="let fieldname of fields" [value]="fieldname">{{fieldname}}
                                             </option>
                                         </select>
@@ -152,7 +205,8 @@
                                     <div class="form-group col-lg-6">
                                         <label for="select">onDelete</label>
                                         <div>
-                                            <select [(ngModel)]="item.onDelete" #onDelete="ngModel" id="onDelete{{i}}" name="onDelete{{i}}" class="custom-select">
+                                            <select [(ngModel)]="item.onDelete" #onDelete="ngModel" id="onDelete{{i}}"
+                                                name="onDelete{{i}}" class="custom-select">
                                                 <option value="cascade">cascade</option>
                                             </select>
                                         </div>
@@ -160,7 +214,8 @@
                                     <div class="form-group  col-lg-6">
                                         <label for="onUpdate">onUpdate</label>
                                         <div>
-                                            <select [(ngModel)]="item.onUpdate" #onUpdate="ngModel" id="onUpdate{{i}}" name="onUpdate{{i}}" class="custom-select">
+                                            <select [(ngModel)]="item.onUpdate" #onUpdate="ngModel" id="onUpdate{{i}}"
+                                                name="onUpdate{{i}}" class="custom-select">
                                                 <option value="cascade">cascade</option>
                                             </select>
                                         </div>
@@ -173,21 +228,27 @@
                         </tab>
                         <tab heading="Relationships" *ngIf="this.project.entities.models.length > 0">
                             <h5 class="mt-1">Relationships
-                                <button type="button" (click)="addRelationship()" class="btn btn-primary btn-sm float-right"><i class="material-icons"
+                                <button type="button" (click)="addRelationship()"
+                                    class="btn btn-primary btn-sm float-right"><i class="material-icons"
                                         style="font-size: 12px;">add</i></button>
                             </h5>
                             <hr>
                             <div class="form-section" *ngFor="let item of model.relationships; let i = index">
-                                <button type="button" (click)="removeRelationship(i)" class="btn btn-outline-danger btn-sm float-right">x</button>
+                                <button type="button" (click)="removeRelationship(i)"
+                                    class="btn btn-outline-danger btn-sm float-right">x</button>
                                 <div class="row">
                                     <div class="form-group col-lg-6">
                                         <label for="relationshipName{{i}}">Name</label>
-                                        <input id="relationshipName{{i}}" name="relationshipName{{i}}" [(ngModel)]="item.name" #relationshipName="ngModel" type="text" class="form-control">
+                                        <input id="relationshipName{{i}}" name="relationshipName{{i}}"
+                                            [(ngModel)]="item.name" #relationshipName="ngModel" type="text"
+                                            class="form-control">
                                     </div>
                                     <div class="form-group col-lg-6">
                                         <label for="relationshipType{{i}}">Type</label>
                                         <div>
-                                            <select id="relationshipType{{i}}" name="relationshipType{{i}}" [(ngModel)]="item.type" #relationshipType{{i}}="ngModel" class="custom-select">
+                                            <select id="relationshipType{{i}}" name="relationshipType{{i}}"
+                                                [(ngModel)]="item.type" #relationshipType{{i}}="ngModel"
+                                                class="custom-select">
                                                 <option *ngFor="let relationshipType of relationshipTypes"
                                                     [value]="relationshipType">{{relationshipType}}</option>
                                             </select>
@@ -197,24 +258,33 @@
                                 <div class="form-group">
                                     <label for="relationshipClass">Class</label>
                                     <div>
-                                        <select id="relationshipClass" name="relationshipClass" [(ngModel)]="item.class" #relationshipClass="ngModel" class="custom-select">
+                                        <select id="relationshipClass" name="relationshipClass" [(ngModel)]="item.class"
+                                            #relationshipClass="ngModel" class="custom-select">
                                             <option *ngFor="let classname of classes" [value]="classname">{{classname}}
                                             </option>
                                         </select>
                                     </div>
                                 </div>
                                 <h6 style="overflow: auto;" for="arg">Arguments
-                                    <button type="button" (click)="addRelationshipArgument(i)" class="btn btn-primary btn-sm mr-1 float-right"><i class="material-icons" style="font-size: 12px;">add</i></button>
+                                    <button type="button" (click)="addRelationshipArgument(i)"
+                                        class="btn btn-primary btn-sm mr-1 float-right"><i class="material-icons"
+                                            style="font-size: 12px;">add</i></button>
                                 </h6>
                                 <hr>
-                                <div class="row" *ngFor="let option of item.arguments; let k = index;trackBy: trackByRelationArgument">
+                                <div class="row"
+                                    *ngFor="let option of item.arguments; let k = index;trackBy: trackByRelationArgument">
                                     <div class="form-group col-lg-10">
-                                        <input id="argument{{k}}" name="argument{{k}}" [(ngModel)]="item.arguments[k]" #relationshipArgument="ngModel" placeholder="Relationship argument" type="text" class="form-control" aria-describedby="optionHelpBlock">
-                                        <span id="optionHelpBlock" class="form-text text-muted">Use the argument available to the type of relation selected</span>
+                                        <input id="argument{{k}}" name="argument{{k}}" [(ngModel)]="item.arguments[k]"
+                                            #relationshipArgument="ngModel" placeholder="Relationship argument"
+                                            type="text" class="form-control" aria-describedby="optionHelpBlock">
+                                        <span id="optionHelpBlock" class="form-text text-muted">Use the argument
+                                            available to the type of relation selected</span>
                                     </div>
                                     <div class="form-group  col-lg-2">
                                         <div class="text-center">
-                                            <button type="button" (click)="removeRelationshipArgument(i,k)" class="btn btn-danger btn-sm mr-1"><i class="material-icons" style="font-size: 12px;">delete</i></button>
+                                            <button type="button" (click)="removeRelationshipArgument(i,k)"
+                                                class="btn btn-danger btn-sm mr-1"><i class="material-icons"
+                                                    style="font-size: 12px;">delete</i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -234,8 +304,8 @@
                         </button>
                         <button name="submit" (click)="isEditMode?updateModel():saveModel()" class="btn btn-success">
                             Save
-                                            <i class="material-icons" style="font-size: 12px;">save</i>
-                                        </button>
+                            <i class="material-icons" style="font-size: 12px;">save</i>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -256,10 +326,12 @@
                         <td>{{item.namespace}}</td>
                         <td>{{item.name}}</td>
                         <td>
-                            <button (click)="editModel(i)" type="button" class="btn btn-primary btn-sm m-1"><i style="font-size: 12px;" class="material-icons">
+                            <button (click)="editModel(i)" type="button" class="btn btn-primary btn-sm m-1"><i
+                                    style="font-size: 12px;" class="material-icons">
                                     edit
                                 </i></button>
-                            <button (click)="removeModel(i)" type="button" class="btn btn-danger btn-sm m-1"><i style="font-size: 12px;" class="material-icons">
+                            <button (click)="removeModel(i)" type="button" class="btn btn-danger btn-sm m-1"><i
+                                    style="font-size: 12px;" class="material-icons">
                                     delete_forever
                                 </i></button>
                         </td>
@@ -270,10 +342,11 @@
                         </td>
                     </tr>
                 </table>
-                <button *ngIf="project.entities.models.length > 0" name="submit" (click)="downloadJson()" class="btn btn-success">
-                        Generate json
-                                        <i class="material-icons" style="font-size: 12px;">code</i>
-                                    </button>
+                <button *ngIf="project.entities.models.length > 0" name="submit" (click)="downloadJson()"
+                    class="btn btn-success">
+                    Generate json
+                    <i class="material-icons" style="font-size: 12px;">code</i>
+                </button>
             </div>
         </div>
         <div class="card mt-1">

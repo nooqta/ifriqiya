@@ -5,6 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { SortableModule } from 'ngx-bootstrap/sortable';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -16,9 +18,11 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     BrowserAnimationsModule,
-    TabsModule.forRoot(),
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    TabsModule.forRoot(),
+    ModalModule.forRoot(),
+    SortableModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]

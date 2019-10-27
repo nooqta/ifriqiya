@@ -14,6 +14,7 @@ export class Model {
     relationships: Array<Relationship>;
     validations: Array<Validation>;
     constructor() {
+        this.namespace = 'App';
         this.softDelete = true;
         this.fields = [];
         this.foreign_keys = [];

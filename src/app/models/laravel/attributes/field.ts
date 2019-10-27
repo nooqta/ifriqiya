@@ -5,5 +5,6 @@ export class Field {
     arguments: string[] = [];
     options: any[] = [];
     constructor(){
+        this.type = 'string';
     }
 }

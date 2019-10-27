@@ -4,4 +4,9 @@ export class ForeignKey {
     on: string;
     onDelete: string;
     onUpdate: string;
+    constructor() {
+        this.references = 'id';
+        this.onDelete = 'cascade';
+        this.onUpdate = 'cascade';
+    }
 }
