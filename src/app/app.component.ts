@@ -113,7 +113,7 @@ export class AppComponent implements OnInit {
     this.field.arguments.splice(j, 1);
   }
 
-  addFieldOption(i) {
+  addFieldOption() {
     this.field.options.push({ key: '', value: '' });
     this.field.options = JSON.parse(JSON.stringify(this.field.options));
 
