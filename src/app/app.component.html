@@ -86,7 +86,7 @@
                 Reset
                 <i class="material-icons" style="font-size: 12px;">refresh</i>
             </button>
-            <button name="submit" (click)="addField()" class="btn btn-success">
+            <button name="submit" (click)="isEditMode? updateField():addField()" class="btn btn-success">
                 Save
                 <i class="material-icons" style="font-size: 12px;">save</i>
             </button>
@@ -152,8 +152,12 @@
                                         <i class="material-icons" style="font-size: 12px;">open_with</i>
                                      {{item.initData.name}}: <code>{{item.initData.type}}</code>
                                     <button type="button" (click)="removeField(index)"
-                                        class="btn btn-danger btn-sm float-right">
+                                        class="btn btn-danger btn-sm float-right mr-1">
                                         <i class="material-icons" style="font-size: 12px;">delete</i>
+                                    </button>
+                                    <button type="button" (click)="editFieldModal(index, template)"
+                                        class="btn btn-primary btn-sm float-right mr-1">
+                                        <i class="material-icons" style="font-size: 12px;">edit</i>
                                     </button>
                                 </li>
                             </ng-template>

@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   currentIndex = 0;
   fieldOptions: string[];
   modalRef: BsModalRef;
-  constructor(public http: HttpClient, private modalService: BsModalService){
+  constructor(public http: HttpClient, private modalService: BsModalService) {
 
   }
   ngOnInit(): void {
@@ -42,6 +42,16 @@ export class AppComponent implements OnInit {
 
   addField() {
     this.model.fields.push(this.field);
+    this.saveAndResetField();
+  }
+  updateField() {
+    this.isEditMode = false;
+    this.model.fields[this.currentIndex] = this.field;
+    this.currentIndex = 0;
+    this.saveAndResetField();
+  }
+
+  private saveAndResetField(){
     this.model = JSON.parse(JSON.stringify(this.model));
     this.field = new Field();
     this.modalRef.hide();
@@ -56,7 +66,7 @@ export class AppComponent implements OnInit {
     this.model = JSON.parse(JSON.stringify(this.model));
   }
 
-  reorderFields(e){
+  reorderFields(e) {
     this.model.fields = e;
   }
 
@@ -67,12 +77,12 @@ export class AppComponent implements OnInit {
     this.getFields();
   }
 
-  resetModel(){
+  resetModel() {
     this.model = new Model();
   }
 
   removeModel(index) {
-    this.project.entities.models.splice(index,1);
+    this.project.entities.models.splice(index, 1);
     this.getFields();
   }
 
@@ -81,7 +91,7 @@ export class AppComponent implements OnInit {
     this.isEditMode = true;
     this.currentIndex = index;
   }
-  
+
   updateModel() {
     this.project.entities.models[this.currentIndex] = this.model;
     this.isEditMode = false;
@@ -90,30 +100,31 @@ export class AppComponent implements OnInit {
     this.getFields();
   }
 
-  addFieldArgument(){
+  addFieldArgument() {
     this.field.arguments.push('');
     this.field.arguments = JSON.parse(JSON.stringify(this.field.arguments));
 
   }
-  
-trackByFieldArgument(index, item) {
-return index;
-}
-  removeFieldArgument(j){
-this.field.arguments.splice(j,1);
+
+  trackByFieldArgument(index, item) {
+    return index;
+  }
+  removeFieldArgument(j) {
+    this.field.arguments.splice(j, 1);
   }
 
-  addFieldOption(i){
-    this.field.options.push({key: '', value: ''});
+  addFieldOption(i) {
+    this.field.options.push({ key: '', value: '' });
     this.field.options = JSON.parse(JSON.stringify(this.field.options));
 
   }
-  
-trackByFieldOption(index, item) {
-return index;
-}
+
+  trackByFieldOption(index, item) {
+    return index;
+  }
+
   removeFieldOption(j) {
-this.field.options.splice(j,1);
+    this.field.options.splice(j, 1);
   }
 
   addForeignKey() {
@@ -141,13 +152,13 @@ this.field.options.splice(j,1);
     this.model.relationships[i].arguments = JSON.parse(JSON.stringify(this.model.relationships[i].arguments));
   }
 
-  removeRelationshipArgument(i,j){
-    this.model.relationships[i].arguments.splice(j,1);
-      }
+  removeRelationshipArgument(i, j) {
+    this.model.relationships[i].arguments.splice(j, 1);
+  }
 
-  trackByRelationArgument (index, item) {
+  trackByRelationArgument(index, item) {
     return index;
-}
+  }
 
   getClasses() {
     this.classes = Array.from(this.project.entities.models, (model: Model) => `${model.namespace}\\${model.name}`);
@@ -157,13 +168,20 @@ this.field.options.splice(j,1);
     this.project.entities.models.forEach(model => {
       model.fillable = this.getModelFields(model);
     });
-    this.http.post('api/laravel/json',{ models: this.project.entities.models }).subscribe((res: any) =>{
+    this.http.post('api/laravel/json', { models: this.project.entities.models }).subscribe((res: any) => {
       const uri = res.uri;
-      window.open( environment.apiUrl + uri, '_blank');
+      window.open(environment.apiUrl + uri, '_blank');
     });
   }
 
-  addFieldModal(template){
+  addFieldModal(template) {
+    this.modalRef = this.modalService.show(template);
+  }
+
+  editFieldModal(index, template) {
+    this.field = this.model.fields[index];
+    this.isEditMode = true;
+    this.currentIndex = index;
     this.modalRef = this.modalService.show(template);
   }
 }
