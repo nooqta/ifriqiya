@@ -23,6 +23,20 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <div class="form-group form-check">
+                    <input type="checkbox" (change)="UpdateFieldArgumentsChecked('nullable', nullable)" value="true" name="nullable" [(ngModel)]="nullable" #fieldNullable="ngModel" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Nullable?</label>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <div class="form-group form-check" *ngIf="['integer', 'bigInteger', 'smallInteger'].includes(field.type)">
+                    <input type="checkbox" (change)="UpdateFieldArgumentsChecked('unsigned', nullable)" value="true" name="unsigned" [(ngModel)]="unsigned" #fieldUnsigned="ngModel" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Unsigned?</label>
+                </div>
+            </div>
+        </div>
         <h6 style="overflow: auto;" for="arg">Arguments
             <button type="button" (click)="addFieldArgument()" class="btn btn-primary btn-sm mr-1 float-right"><i
                     class="material-icons" style="font-size: 12px;">add</i></button>
@@ -143,7 +157,8 @@
                                     </button>
                                 </li>
                             </ng-template>
-                            <bs-sortable [(ngModel)]="model.fields" itemClass="sortable-item" (onChange)="reorderFields($event)" itemActiveClass="sortable-item-active" placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper" [itemTemplate]="itemTemplate" [ngModelOptions]="{standalone: true}">
+                            <bs-sortable (drop)="dropField($event)" [(ngModel)]="model.fields" itemClass="sortable-item" (onChange)="reorderFields($event)" itemActiveClass="sortable-item-active" placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper" [itemTemplate]="itemTemplate"
+                                [ngModelOptions]="{standalone: true}">
                             </bs-sortable>
                             <div *ngIf="model.fields.length == 0" class="alert alert-primary" role="alert">
                                 Start adding your fields by pressing the + button.
@@ -151,7 +166,7 @@
                             <!-- end fields -->
                         </tab>
 
-                        <tab heading="Foreign keys" *ngIf="this.project.entities.models.length > 0">
+                        <tab heading="Foreign keys" *ngIf="this.project.entities.models.length > 0 && this.columns.length >0">
                             <h5 class="mt-1">Foreign keys
                                 <button type="button" (click)="addForeignKey()" class="btn btn-primary btn-sm float-right"><i class="material-icons"
                                         style="font-size: 12px;">add</i></button>
@@ -162,7 +177,10 @@
                                 <div class="row">
                                     <div class="form-group col-lg-6">
                                         <label for="column{{i}}">Column</label>
-                                        <input id="column{{i}}" name="column{{i}}" [(ngModel)]="item.column" #column="ngModel" type="text" class="form-control">
+                                        <select id="column{{i}}" name="column{{i}}" [(ngModel)]="item.column" #on="ngModel" class="custom-select">
+                                            <option *ngFor="let column of columns" [value]="column.name">{{column.name}}
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group  col-lg-6">
                                         <label for="references{{i}}">References</label>
@@ -201,7 +219,7 @@
                                 Start adding your foreign keys by pressing the + button.
                             </div>
                         </tab>
-                        <tab heading="Relationships" *ngIf="this.project.entities.models.length > 0">
+                        <tab heading="Relationships" *ngIf="this.project.entities.models.length > 0 && this.columns.length >0">
                             <h5 class="mt-1">Relationships
                                 <button type="button" (click)="addRelationship()" class="btn btn-primary btn-sm float-right"><i class="material-icons"
                                         style="font-size: 12px;">add</i></button>
@@ -279,32 +297,25 @@
             <div class="card-body">
                 <h5 class="card-title">List of models</h5>
                 <h6 class="card-subtitle mb-2 text-muted">List of the models you have created so far</h6>
-                <table class="table">
-                    <thead>
-                        <th>Namespace</th>
-                        <th>Name</th>
-                        <th>Actions</th>
-                    </thead>
-                    <tr *ngFor="let item of project.entities.models; let i = index;">
-                        <td>{{item.namespace}}</td>
-                        <td>{{item.name}}</td>
-                        <td>
-                            <button (click)="editModel(i)" type="button" class="btn btn-primary btn-sm m-1"><i
-                                    style="font-size: 12px;" class="material-icons">
-                                    edit
-                                </i></button>
-                            <button (click)="removeModel(i)" type="button" class="btn btn-danger btn-sm m-1"><i
-                                    style="font-size: 12px;" class="material-icons">
-                                    delete_forever
-                                </i></button>
-                        </td>
-                    </tr>
-                    <tr *ngIf="project.entities.models.length == 0" class="alert alert-primary" role="alert">
-                        <td colspan="3">
-                            Start adding your models.
-                        </td>
-                    </tr>
-                </table>
+                <ul>
+                    <ng-template class="table" #modelTemplate let-item="item" let-index="index">
+                        <li class="list-group-item mb-1">
+                            <i class="material-icons" style="font-size: 12px;">open_with</i> {{item.initData.name}}: <code>{{item.initData.namespace}}</code>
+                            <button type="button" (click)="removeModel(index)" class="btn btn-danger btn-sm float-right mr-1">
+                                        <i class="material-icons" style="font-size: 12px;">delete</i>
+                                    </button>
+                            <button type="button" (click)="editModel(index)" class="btn btn-primary btn-sm float-right mr-1">
+                                        <i class="material-icons" style="font-size: 12px;">edit</i>
+                                    </button>
+                        </li>
+                    </ng-template>
+                    <bs-sortable [(ngModel)]="project.entities.models" itemClass="sortable-item" (onChange)="reorderModels($event)" itemActiveClass="sortable-item-active" placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper" [itemTemplate]="modelTemplate" [ngModelOptions]="{standalone: true}">
+                    </bs-sortable>
+
+                </ul>
+                <div *ngIf="project.entities.models.length == 0" class="alert alert-primary" role="alert">
+                    Start adding your models.
+                </div>
                 <button *ngIf="project.entities.models.length > 0" name="submit" (click)="downloadJson()" class="btn btn-success">
                     Generate json
                     <i class="material-icons" style="font-size: 12px;">code</i>

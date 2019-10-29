@@ -26,6 +26,8 @@ export class AppComponent implements OnInit {
   currentIndex = 0;
   fieldOptions: string[];
   modalRef: BsModalRef;
+  nullable = true;
+  unsigned = false;
   constructor(public http: HttpClient, private modalService: BsModalService) {
 
   }
@@ -69,9 +71,19 @@ export class AppComponent implements OnInit {
   reorderFields(e) {
     this.model.fields = e;
   }
+  dropField(e) {
+      console.log(e);
+  }
+
+  reorderModels(e) {
+    this.project.entities.models = e;
+  }
+
+
 
   saveModel() {
     this.project.entities.models.push(this.model);
+    this.project.entities.models = JSON.parse(JSON.stringify(this.project.entities.models));
     this.model = new Model();
     this.getClasses();
     this.getFields();
@@ -110,6 +122,7 @@ export class AppComponent implements OnInit {
     return index;
   }
   removeFieldArgument(j) {
+    if(['nullable', 'unsigned'].includes(this.field.arguments[j])) this[this.field.arguments[j]] = false;
     this.field.arguments.splice(j, 1);
   }
 
@@ -135,6 +148,10 @@ export class AppComponent implements OnInit {
   }
   getFields() {
     this.fields = Array.from(this.project.entities.models, (model: Model) => `${model.name.toLowerCase()}`);
+  }
+
+  get columns(): Array<any> {
+    return this.model.fields.filter(field => field.name.includes('_id'));
   }
 
   getModelFields(model) {
@@ -183,5 +200,17 @@ export class AppComponent implements OnInit {
     this.isEditMode = true;
     this.currentIndex = index;
     this.modalRef = this.modalService.show(template);
+  }
+
+  UpdateFieldArgumentsChecked(arg, value){
+    console.table(this.field);
+    const index: any = this.field.arguments.find(argument => argument == arg);
+    const argExists = typeof index != 'undefined';
+    if(argExists && !value) {
+      this.field.arguments.splice(index, 1);
+    }
+    if(!argExists && value){
+      this.field.arguments.push(arg);
+    }
   }
 }
