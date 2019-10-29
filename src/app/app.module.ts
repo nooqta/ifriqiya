@@ -9,6 +9,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { SortableModule } from 'ngx-bootstrap/sortable';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import {DndModule} from 'ng2-dnd';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { HttpClientModule } from '@angular/common/http';
     TabsModule.forRoot(),
     ModalModule.forRoot(),
     SortableModule.forRoot(),
+    DndModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]

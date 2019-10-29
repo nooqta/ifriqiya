@@ -6,97 +6,104 @@
         </button>
     </div>
     <div class="modal-body">
-        <div class="row">
-            <div class="form-group col-lg-6">
-                <label for="name">Name</label>
-                <input id="fieldName" [autofocus] (change)="getFields()" name="fieldName" [(ngModel)]="field.name" #fieldName="ngModel" placeholder="Field name" type="text" class="form-control" aria-describedby="nameHelpBlock" required="required">
-                <span id="nameHelpBlock" class="form-text text-muted">The field name of the
+        <form>
+            <h6 style="overflow: auto;" for="arg">Field
+                <button type="button" (click)="isEditMode? updateField():addField()" class="btn btn-success btn-sm mr-1 float-right"><i
+                            class="material-icons" style="font-size: 12px;">save</i></button>
+            </h6>
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <label for="name">Name</label>
+                    <input id="fieldName" (keyup.enter)="isEditMode? updateField():addField()" [autofocus] (change)="getFields()" name="fieldName" [(ngModel)]="field.name" #fieldName="ngModel" placeholder="Field name" type="text" class="form-control" aria-describedby="nameHelpBlock"
+                        required="required">
+                    <span id="nameHelpBlock" class="form-text text-muted">The field name of the
                     model</span>
-            </div>
-            <div class="form-group col-lg-6">
-                <label for="type">Type</label>
-                <div>
-                    <select id="fieldType" name="fieldType" required [(ngModel)]="field.type" #fieldType="ngModel" required="required" class="custom-select" aria-describedby="typeHelpBlock">
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="type">Type</label>
+                    <div>
+                        <select id="fieldType" name="fieldType" required [(ngModel)]="field.type" #fieldType="ngModel" required="required" class="custom-select" aria-describedby="typeHelpBlock">
                         <option *ngFor="let type of fieldTypes" [value]="type">{{type}}</option>
                     </select>
-                    <span id="typeHelpBlock" class="form-text text-muted">The field type</span>
+                        <span id="typeHelpBlock" class="form-text text-muted">The field type</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-lg-6">
-                <div class="form-group form-check">
-                    <input type="checkbox" (change)="UpdateFieldArgumentsChecked('nullable', nullable)" value="true" name="nullable" [(ngModel)]="nullable" #fieldNullable="ngModel" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Nullable?</label>
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <div class="form-group form-check">
+                        <input type="checkbox" (change)="UpdateFieldArgumentsChecked('nullable', nullable)" value="true" name="nullable" [(ngModel)]="nullable" #fieldNullable="ngModel" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Nullable?</label>
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <div class="form-group form-check" *ngIf="['integer', 'bigInteger', 'smallInteger'].includes(field.type)">
+                        <input type="checkbox" (change)="UpdateFieldArgumentsChecked('unsigned', nullable)" value="true" name="unsigned" [(ngModel)]="unsigned" #fieldUnsigned="ngModel" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Unsigned?</label>
+                    </div>
                 </div>
             </div>
-            <div class="form-group col-lg-6">
-                <div class="form-group form-check" *ngIf="['integer', 'bigInteger', 'smallInteger'].includes(field.type)">
-                    <input type="checkbox" (change)="UpdateFieldArgumentsChecked('unsigned', nullable)" value="true" name="unsigned" [(ngModel)]="unsigned" #fieldUnsigned="ngModel" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Unsigned?</label>
-                </div>
-            </div>
-        </div>
-        <h6 style="overflow: auto;" for="arg">Arguments
-            <button type="button" (click)="addFieldArgument()" class="btn btn-primary btn-sm mr-1 float-right"><i
+            <h6 style="overflow: auto;" for="arg">Arguments
+                <button type="button" (click)="addFieldArgument()" class="btn btn-primary btn-sm mr-1 float-right"><i
                     class="material-icons" style="font-size: 12px;">add</i></button>
-        </h6>
-        <hr>
-        <div class="row" *ngFor="let argument of field.arguments; let j = index;trackBy: trackByFieldArgument">
-            <div class="form-group col-lg-10">
-                <input id="arg{{j}}" name="arg{{j}}" [(ngModel)]="field.arguments[j]" #fieldArgument="ngModel" placeholder="Field argument" type="text" class="form-control" aria-describedby="argumentHelpBlock">
-                <span id="argumentHelpBlock" class="form-text text-muted">Use the arguments
+            </h6>
+            <hr>
+            <div class="row" *ngFor="let argument of field.arguments; let j = index;trackBy: trackByFieldArgument">
+                <div class="form-group col-lg-10">
+                    <input id="arg{{j}}" name="arg{{j}}" [(ngModel)]="field.arguments[j]" #fieldArgument="ngModel" placeholder="Field argument" type="text" class="form-control" aria-describedby="argumentHelpBlock">
+                    <span id="argumentHelpBlock" class="form-text text-muted">Use the arguments
                     available to the type of model selected</span>
-            </div>
-            <div class="form-group  col-lg-2">
-                <div class="text-center">
-                    <button type="button" (click)="removeFieldArgument(j)" class="btn btn-danger btn-sm mr-1"><i
+                </div>
+                <div class="form-group  col-lg-2">
+                    <div class="text-center">
+                        <button type="button" (click)="removeFieldArgument(j)" class="btn btn-danger btn-sm mr-1"><i
                             class="material-icons" style="font-size: 12px;">delete</i></button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div *ngIf="field.arguments.length == 0" class="alert alert-primary" role="alert">
-            Start adding your fields arguments by pressing the + button.
-        </div>
-        <h6 style="overflow: auto;" for="arg">Options
-            <button type="button" (click)="addFieldOption()" class="btn btn-primary btn-sm mr-1 float-right"><i
+            <div *ngIf="field.arguments.length == 0" class="alert alert-primary" role="alert">
+                Start adding your fields arguments by pressing the + button.
+            </div>
+            <h6 style="overflow: auto;" for="arg">Options
+                <button type="button" (click)="addFieldOption()" class="btn btn-primary btn-sm mr-1 float-right"><i
                     class="material-icons" style="font-size: 12px;">add</i></button>
-        </h6>
-        <hr>
-        <div class="row" *ngFor="let option of field.options; let k = index;trackBy: trackByFieldOption">
-            <div class="form-group col-lg-5">
-                <div>
-                    <select id="optionKey{{k}}" name="optionKey{{k}}" [(ngModel)]="field.options[k].key" #fieldKeyOption="ngModel" required="required" class="custom-select" aria-describedby="typeHelpBlock">
+            </h6>
+            <hr>
+            <div class="row" *ngFor="let option of field.options; let k = index;trackBy: trackByFieldOption">
+                <div class="form-group col-lg-5">
+                    <div>
+                        <select id="optionKey{{k}}" name="optionKey{{k}}" [(ngModel)]="field.options[k].key" #fieldKeyOption="ngModel" required="required" class="custom-select" aria-describedby="typeHelpBlock">
                         <option *ngFor="let option of fieldOptions" [value]="option">{{option}}</option>
                     </select>
-                    <span id="typeHelpBlock" class="form-text text-muted">The field options</span>
+                        <span id="typeHelpBlock" class="form-text text-muted">The field options</span>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group col-lg-5">
-                <input id="optionArg{{k}}" name="optionArg{{k}}" [(ngModel)]="field.options[k].value" #fieldOption="ngModel" placeholder="Field option" type="text" class="form-control" aria-describedby="optionHelpBlock">
-                <span id="optionHelpBlock" class="form-text text-muted">Use the options
+                <div class="form-group col-lg-5">
+                    <input id="optionArg{{k}}" name="optionArg{{k}}" [(ngModel)]="field.options[k].value" #fieldOption="ngModel" placeholder="Field option" type="text" class="form-control" aria-describedby="optionHelpBlock">
+                    <span id="optionHelpBlock" class="form-text text-muted">Use the options
                     available option arguments</span>
-            </div>
-            <div class="form-group  col-lg-2">
-                <div class="text-center">
-                    <button type="button" (click)="removeFieldOption(k)" class="btn btn-danger btn-sm mr-1"><i
+                </div>
+                <div class="form-group  col-lg-2">
+                    <div class="text-center">
+                        <button type="button" (click)="removeFieldOption(k)" class="btn btn-danger btn-sm mr-1"><i
                             class="material-icons" style="font-size: 12px;">delete</i></button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div *ngIf="field.options.length == 0" class="alert alert-primary" role="alert">
-            Start adding your fields options by pressing the + button.
-        </div>
-        <div class="form-group float-right">
-            <button name="reset" (click)="resetField()" class="btn btn-danger mr-1">
+            <div *ngIf="field.options.length == 0" class="alert alert-primary" role="alert">
+                Start adding your fields options by pressing the + button.
+            </div>
+            <div class="form-group float-right">
+                <button name="reset" (click)="resetField()" class="btn btn-danger mr-1">
                 Reset
                 <i class="material-icons" style="font-size: 12px;">refresh</i>
             </button>
-            <button name="submit" (click)="isEditMode? updateField():addField()" class="btn btn-success">
+                <button name="submit" (click)="isEditMode? updateField():addField()" class="btn btn-success">
                 Save
                 <i class="material-icons" style="font-size: 12px;">save</i>
             </button>
-        </div>
+            </div>
+        </form>
     </div>
 </ng-template>
 <a href="https://github.com/nooqta/ifriqiya"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
@@ -114,7 +121,7 @@
                     </button>
                 </h5>
                 <h6 class="card-subtitle mb-2 text-muted">Use the fields below to define your model</h6>
-                <form #form="ngForm">
+                <form #form="ngForm" dnd-droppable (onDropSuccess)="modelDropped($event)" [dropZones]="['zone1']">
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input id="name" name="name" [(ngModel)]="model.name" #name="ngModel" placeholder="Model name" type="text" aria-describedby="nameHelpBlock" required="required" class="form-control">
@@ -298,19 +305,17 @@
                 <h5 class="card-title">List of models</h5>
                 <h6 class="card-subtitle mb-2 text-muted">List of the models you have created so far</h6>
                 <ul>
-                    <ng-template class="table" #modelTemplate let-item="item" let-index="index">
-                        <li class="list-group-item mb-1">
-                            <i class="material-icons" style="font-size: 12px;">open_with</i> {{item.initData.name}}: <code>{{item.initData.namespace}}</code>
-                            <button type="button" (click)="removeModel(index)" class="btn btn-danger btn-sm float-right mr-1">
+                    <div class="table" *ngFor="let item of project.entities.models; let i = index">
+                        <div dnd-draggable [dragEnabled]="true" class="list-group-item mb-1" [dropZones]="['zone1']" [dragData]="item">
+                            <i class="material-icons" style="font-size: 12px;">open_with</i> {{item.name}}: <code>{{item.namespace}}</code>
+                            <button type="button" (click)="removeModel(i)" class="btn btn-danger btn-sm float-right mr-1">
                                         <i class="material-icons" style="font-size: 12px;">delete</i>
                                     </button>
-                            <button type="button" (click)="editModel(index)" class="btn btn-primary btn-sm float-right mr-1">
+                            <button type="button" (click)="editModel(i)" class="btn btn-primary btn-sm float-right mr-1">
                                         <i class="material-icons" style="font-size: 12px;">edit</i>
                                     </button>
-                        </li>
-                    </ng-template>
-                    <bs-sortable [(ngModel)]="project.entities.models" itemClass="sortable-item" (onChange)="reorderModels($event)" itemActiveClass="sortable-item-active" placeholderClass="placeholderStyle" wrapperClass="sortable-wrapper" [itemTemplate]="modelTemplate" [ngModelOptions]="{standalone: true}">
-                    </bs-sortable>
+                        </div>
+                    </div>
 
                 </ul>
                 <div *ngIf="project.entities.models.length == 0" class="alert alert-primary" role="alert">

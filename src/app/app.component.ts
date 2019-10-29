@@ -121,6 +121,7 @@ export class AppComponent implements OnInit {
   trackByFieldArgument(index, item) {
     return index;
   }
+  
   removeFieldArgument(j) {
     if(['nullable', 'unsigned'].includes(this.field.arguments[j])) this[this.field.arguments[j]] = false;
     this.field.arguments.splice(j, 1);
@@ -212,5 +213,38 @@ export class AppComponent implements OnInit {
     if(!argExists && value){
       this.field.arguments.push(arg);
     }
+  }
+
+  modelDropped(e){
+    const model = e.dragData;
+    
+    // Add field
+    let field = new Field();
+    field.name = model.name.toLowerCase() + '_id';
+    field.type = 'integer';
+    field.options.push('unsigned');
+    this.model.fields.push(field);
+
+    // Add foreign key
+    let foreignKey = new ForeignKey();
+    foreignKey.column = field.name;
+    foreignKey.on = model.name;
+    foreignKey.onDelete = 'cascade';
+    foreignKey.onUpdate = 'cascade';
+    this.model.foreign_keys.push(foreignKey);
+
+    // Add relationship
+    let relationship = new Relationship();
+    relationship.name = model.name.toLowerCase();
+    relationship.type = 'belongsTo';
+    relationship.class = `${model.namespace}\\${this.capitalize(model.name)}`;
+    this.model.relationships.push(relationship);
+    
+    // Update model
+    this.model = JSON.parse(JSON.stringify(this.model));
+  }
+
+  capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   }
 }
