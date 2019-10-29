@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { SortableModule } from 'ngx-bootstrap/sortable';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import {DndModule} from 'ng2-dnd';
@@ -20,10 +21,12 @@ import {DndModule} from 'ng2-dnd';
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+    FormsModule,
     HttpClientModule,
     TabsModule.forRoot(),
     ModalModule.forRoot(),
     SortableModule.forRoot(),
+    TooltipModule.forRoot(),
     DndModule.forRoot(),
   ],
   providers: [],

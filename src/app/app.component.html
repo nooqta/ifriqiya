@@ -8,13 +8,13 @@
     <div class="modal-body">
         <form>
             <h6 style="overflow: auto;" for="arg">Field
-                <button type="button" (click)="isEditMode? updateField():addField()" class="btn btn-success btn-sm mr-1 float-right"><i
+                <button type="button" (click)="isFieldEditMode? updateField():addField()" class="btn btn-success btn-sm mr-1 float-right"><i
                             class="material-icons" style="font-size: 12px;">save</i></button>
             </h6>
             <div class="row">
                 <div class="form-group col-lg-6">
                     <label for="name">Name</label>
-                    <input id="fieldName" (keyup.enter)="isEditMode? updateField():addField()" [autofocus] (change)="getFields()" name="fieldName" [(ngModel)]="field.name" #fieldName="ngModel" placeholder="Field name" type="text" class="form-control" aria-describedby="nameHelpBlock"
+                    <input id="fieldName" (keyup.enter)="isFieldEditMode? updateField():addField()" [autofocus] (change)="getFields()" name="fieldName" [(ngModel)]="field.name" #fieldName="ngModel" placeholder="Field name" type="text" class="form-control" aria-describedby="nameHelpBlock"
                         required="required">
                     <span id="nameHelpBlock" class="form-text text-muted">The field name of the
                     model</span>
@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group col-lg-6">
                     <div class="form-group form-check" *ngIf="['integer', 'bigInteger', 'smallInteger'].includes(field.type)">
-                        <input type="checkbox" (change)="UpdateFieldArgumentsChecked('unsigned', nullable)" value="true" name="unsigned" [(ngModel)]="unsigned" #fieldUnsigned="ngModel" class="form-check-input" id="exampleCheck1">
+                        <input type="checkbox" (change)="UpdateFieldArgumentsChecked('unsigned', unsigned)" value="true" name="unsigned" [(ngModel)]="unsigned" #fieldUnsigned="ngModel" class="form-check-input" id="exampleCheck1">
                         <label class="form-check-label" for="exampleCheck1">Unsigned?</label>
                     </div>
                 </div>
@@ -98,10 +98,36 @@
                 Reset
                 <i class="material-icons" style="font-size: 12px;">refresh</i>
             </button>
-                <button name="submit" (click)="isEditMode? updateField():addField()" class="btn btn-success">
+                <button name="submit" (click)="isFieldEditMode? updateField():addField()" class="btn btn-success">
                 Save
                 <i class="material-icons" style="font-size: 12px;">save</i>
             </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+<ng-template #importTemplate>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Import models</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <textarea class="form-control" name="import" id="import" cols="30" rows="10" [(ngModel)]="importedModels"></textarea>
+                <span id="optionHelpBlock" class="form-text text-muted">Paste your json into the textarea</span>
+            </div>
+            <div class="form-group float-right">
+                <button name="reset" (click)="modalRef.hide()" class="btn btn-danger mr-1">
+                                Cancel
+                                <i class="material-icons" style="font-size: 12px;">cancel</i>
+                            </button>
+                <button name="submit" (click)="import()" class="btn btn-success">
+                                Save
+                                <i class="material-icons" style="font-size: 12px;">save</i>
+                            </button>
             </div>
         </form>
     </div>
@@ -148,7 +174,7 @@
                                     </h5>
                                 </div>
                                 <div class="col-lg-2">
-                                    <button (click)="addFieldModal(template)" type="button" class="btn btn-primary btn-sm"><i class="material-icons"
+                                    <button (click)="openModal(template)" type="button" class="btn btn-primary btn-sm"><i class="material-icons"
                                             style="font-size: 12px;">add</i></button>
                                 </div>
                             </div>
@@ -173,7 +199,8 @@
                             <!-- end fields -->
                         </tab>
 
-                        <tab heading="Foreign keys" *ngIf="this.project.entities.models.length > 0 && this.columns.length >0">
+                        <!-- <tab heading="Foreign keys" *ngIf="this.project.entities.models.length > 0 && this.columns.length >0"> -->
+                        <tab heading="Foreign keys">
                             <h5 class="mt-1">Foreign keys
                                 <button type="button" (click)="addForeignKey()" class="btn btn-primary btn-sm float-right"><i class="material-icons"
                                         style="font-size: 12px;">add</i></button>
@@ -226,7 +253,8 @@
                                 Start adding your foreign keys by pressing the + button.
                             </div>
                         </tab>
-                        <tab heading="Relationships" *ngIf="this.project.entities.models.length > 0 && this.columns.length >0">
+                        <!-- <tab heading="Relationships" *ngIf="this.project.entities.models.length > 0 && this.columns.length >0"> -->
+                        <tab heading="Relationships">
                             <h5 class="mt-1">Relationships
                                 <button type="button" (click)="addRelationship()" class="btn btn-primary btn-sm float-right"><i class="material-icons"
                                         style="font-size: 12px;">add</i></button>
@@ -302,14 +330,21 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">List of models</h5>
+                <h5 class="card-title">List of models
+                    <button type="button" (click)="openModal(importTemplate)" class="btn btn-info btn-sm float-right mr-1">
+                                <i class="material-icons" style="font-size: 12px;">cloud_upload</i>
+                            </button>
+                </h5>
                 <h6 class="card-subtitle mb-2 text-muted">List of the models you have created so far</h6>
                 <ul>
-                    <div class="table" *ngFor="let item of project.entities.models; let i = index">
-                        <div dnd-draggable [dragEnabled]="true" class="list-group-item mb-1" [dropZones]="['zone1']" [dragData]="item">
+                    <div dnd-sortable-container [sortableData]="project.entities.models" class="table" *ngFor="let item of project.entities.models; let i = index">
+                        <div dnd-draggable [dragEnabled]="true" class="list-group-item mb-1" [dropZones]="['zone1']"  dnd-sortable [sortableIndex]="i" [dragData]="item">
                             <i class="material-icons" style="font-size: 12px;">open_with</i> {{item.name}}: <code>{{item.namespace}}</code>
                             <button type="button" (click)="removeModel(i)" class="btn btn-danger btn-sm float-right mr-1">
-                                        <i class="material-icons" style="font-size: 12px;">delete</i>
+                                <i class="material-icons" style="font-size: 12px;">delete</i>
+                            </button>
+                            <button type="button" (click)="modelDropped(item)" tooltip="Add model as foreign key to the current model." class="btn btn-success btn-sm float-right mr-1">
+                                        <i class="material-icons" style="font-size: 12px;">add</i>
                                     </button>
                             <button type="button" (click)="editModel(i)" class="btn btn-primary btn-sm float-right mr-1">
                                         <i class="material-icons" style="font-size: 12px;">edit</i>

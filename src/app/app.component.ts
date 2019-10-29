@@ -23,9 +23,11 @@ export class AppComponent implements OnInit {
   relationshipTypes: string[];
   classes: any[];
   isEditMode = false;
+  isFieldEditMode = false;
   currentIndex = 0;
   fieldOptions: string[];
   modalRef: BsModalRef;
+  importedModels: any;
   nullable = true;
   unsigned = false;
   constructor(public http: HttpClient, private modalService: BsModalService) {
@@ -47,7 +49,7 @@ export class AppComponent implements OnInit {
     this.saveAndResetField();
   }
   updateField() {
-    this.isEditMode = false;
+    this.isFieldEditMode = false;
     this.model.fields[this.currentIndex] = this.field;
     this.currentIndex = 0;
     this.saveAndResetField();
@@ -123,7 +125,6 @@ export class AppComponent implements OnInit {
   }
   
   removeFieldArgument(j) {
-    if(['nullable', 'unsigned'].includes(this.field.arguments[j])) this[this.field.arguments[j]] = false;
     this.field.arguments.splice(j, 1);
   }
 
@@ -179,7 +180,7 @@ export class AppComponent implements OnInit {
   }
 
   getClasses() {
-    this.classes = Array.from(this.project.entities.models, (model: Model) => `${model.namespace}\\${model.name}`);
+    this.classes = Array.from(this.project.entities.models, (model: Model) => `${model.namespace}\\${this.capitalize(model.name)}`);
   }
 
   downloadJson() {
@@ -192,31 +193,36 @@ export class AppComponent implements OnInit {
     });
   }
 
-  addFieldModal(template) {
+  openModal(template) {
     this.modalRef = this.modalService.show(template);
   }
 
   editFieldModal(index, template) {
     this.field = this.model.fields[index];
-    this.isEditMode = true;
+    this.isFieldEditMode = true;
     this.currentIndex = index;
+    this.nullable = typeof (this.field.options.includes('nullable')) != 'undefined';
+    this.unsigned = typeof (this.field.options.includes('unsigned')) != 'undefined';
+
     this.modalRef = this.modalService.show(template);
   }
 
   UpdateFieldArgumentsChecked(arg, value){
-    console.table(this.field);
-    const index: any = this.field.arguments.find(argument => argument == arg);
-    const argExists = typeof index != 'undefined';
-    if(argExists && !value) {
-      this.field.arguments.splice(index, 1);
+    const index: any = this.field.options.findIndex(option => option.key == arg);
+    console.log(index);
+    const argExists = index > -1;
+    if(argExists && !this[arg]) {
+      this.field.options.splice(index, 1);
+      
     }
-    if(!argExists && value){
-      this.field.arguments.push(arg);
+    if(!argExists && this[arg]) {
+      this.field.options.push({key: arg, value: ''});
     }
+    this.field = JSON.parse(JSON.stringify(this.field));
   }
 
   modelDropped(e){
-    const model = e.dragData;
+    const model = e;
     
     // Add field
     let field = new Field();
@@ -228,7 +234,7 @@ export class AppComponent implements OnInit {
     // Add foreign key
     let foreignKey = new ForeignKey();
     foreignKey.column = field.name;
-    foreignKey.on = model.name;
+    foreignKey.on = model.name.toLowerCase();
     foreignKey.onDelete = 'cascade';
     foreignKey.onUpdate = 'cascade';
     this.model.foreign_keys.push(foreignKey);
@@ -246,5 +252,13 @@ export class AppComponent implements OnInit {
 
   capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+
+  import() {
+    let data = JSON.parse(this.importedModels);
+    this.project.entities.models = data;
+    this.getFields();
+    this.getClasses();
+    this.modalRef.hide();
   }
 }
