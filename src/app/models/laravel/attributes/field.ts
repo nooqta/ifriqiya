@@ -6,5 +6,6 @@ export class Field {
     options: any[] = [];
     constructor(){
         this.type = 'string';
+        this.arguments.push('nullable');
     }
 }
