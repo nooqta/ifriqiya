@@ -336,9 +336,10 @@
                             </button>
                 </h5>
                 <h6 class="card-subtitle mb-2 text-muted">List of the models you have created so far</h6>
+                <div class="text-center"><img *ngIf="src" [src]="src" /></div>
                 <ul>
                     <div dnd-sortable-container [sortableData]="project.entities.models" class="table" *ngFor="let item of project.entities.models; let i = index">
-                        <div dnd-draggable [dragEnabled]="true" class="list-group-item mb-1" [dropZones]="['zone1']"  dnd-sortable [sortableIndex]="i" [dragData]="item">
+                        <div dnd-draggable [dragEnabled]="true" class="list-group-item mb-1" [dropZones]="['zone1']" dnd-sortable [sortableIndex]="i" [dragData]="item">
                             <i class="material-icons" style="font-size: 12px;">open_with</i> {{item.name}}: <code>{{item.namespace}}</code>
                             <button type="button" (click)="removeModel(i)" class="btn btn-danger btn-sm float-right mr-1">
                                 <i class="material-icons" style="font-size: 12px;">delete</i>

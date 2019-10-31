@@ -3,6 +3,7 @@ import { AngularUniversalModule } from '@nestjs/ng-universal';
 import { join } from 'path';
 import { HelloController } from './src/hello/hello.controller';
 import { LaravelController } from './src/laravel/laravel.controller';
+import { PlantUmlController } from './src/plant-uml/plant-uml.controller';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { LaravelController } from './src/laravel/laravel.controller';
       liveReload: true
     })
   ],
-  controllers: [HelloController, LaravelController]
+  controllers: [HelloController, LaravelController, PlantUmlController]
 })
 export class ApplicationModule {}
