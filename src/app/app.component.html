@@ -336,7 +336,9 @@
                             </button>
                 </h5>
                 <h6 class="card-subtitle mb-2 text-muted">List of the models you have created so far</h6>
-                <div class="text-center"><img *ngIf="src" [src]="src" /></div>
+                <div class="text-center">
+                    <a *ngIf="src" target="_blank" [href]="src"><img [src]="src" /></a>
+                </div>
                 <ul>
                     <div dnd-sortable-container [sortableData]="project.entities.models" class="table" *ngFor="let item of project.entities.models; let i = index">
                         <div dnd-draggable [dragEnabled]="true" class="list-group-item mb-1" [dropZones]="['zone1']" dnd-sortable [sortableIndex]="i" [dragData]="item">
