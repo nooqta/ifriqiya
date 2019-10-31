@@ -7,8 +7,6 @@ A demo can be found at the following link
 
 https://ifriqiya.noqta.tn/
 
-![Ifriqiya Demo](src/assets/img/captured.gif?raw=true "إفريقيا")
-
 # Dependencies
 
 - node
